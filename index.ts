@@ -1,50 +1,45 @@
-import Browser from 'webextension-polyfill'
-import { ALL_IN_ONE_PAGE_ID } from '~app/consts'
-import { getUserConfig } from '~services/user-config'
-import { trackInstallSource } from './source'
-import { readTwitterCsrfToken } from './twitter-cookie'
+import i18n, { Resource } from 'i18next'
+import LanguageDetector from 'i18next-browser-languagedetector'
+import { initReactI18next } from 'react-i18next'
+import { getLanguage } from '~services/storage/language'
+import french from './locales/french.json'
+import german from './locales/german.json'
+import indonesia from './locales/indonesia.json'
+import japanese from './locales/japanese.json'
+import portuguese from './locales/portuguese.json'
+import simplifiedChinese from './locales/simplified-chinese.json'
+import spanish from './locales/spanish.json'
+import thai from './locales/thai.json'
+import traditionalChinese from './locales/traditional-chinese.json'
 
-// expose storage.session to content scripts
-// using `chrome.*` API because `setAccessLevel` is not supported by `Browser.*` API
-chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' })
-
-async function openAppPage() {
-  const tabs = await Browser.tabs.query({})
-  const url = Browser.runtime.getURL('app.html')
-  const tab = tabs.find((tab) => tab.url?.startsWith(url))
-  if (tab) {
-    await Browser.tabs.update(tab.id, { active: true })
-    return
-  }
-  const { startupPage } = await getUserConfig()
-  const hash = startupPage === ALL_IN_ONE_PAGE_ID ? '' : `#/chat/${startupPage}`
-  await Browser.tabs.create({ url: `app.html${hash}` })
+const resources: Resource = {
+  'zh-CN': { translation: simplifiedChinese },
+  'zh-TW': { translation: traditionalChinese },
+  es: { translation: spanish },
+  pt: { translation: portuguese },
+  ja: { translation: japanese },
+  de: { translation: german },
+  fr: { translation: french },
+  in: { translation: indonesia },
+  th: { translation: thai },
 }
 
-Browser.action.onClicked.addListener(() => {
-  openAppPage()
-})
+export const languageCodes = Object.keys(resources)
 
-Browser.runtime.onInstalled.addListener((details) => {
-  if (details.reason === 'install') {
-    Browser.tabs.create({ url: 'app.html#/setting' })
-    trackInstallSource()
-  }
-})
+i18n
+  .use(initReactI18next)
+  .use(LanguageDetector)
+  .init({
+    lng: getLanguage(),
+    fallbackLng: 'en',
+    resources,
+    interpolation: {
+      escapeValue: false, // react already safes from xss
+    },
+    detection: {
+      order: ['navigator'],
+      caches: [],
+    },
+  })
 
-Browser.commands.onCommand.addListener(async (command) => {
-  // console.debug(`Command: ${command}`)
-  if (command === 'open-app') {
-    openAppPage()
-  }
-})
-
-Browser.runtime.onMessage.addListener(async (message, sender) => {
-  // console.debug('onMessage', message, sender)
-  if (message.target !== 'background') {
-    return
-  }
-  if (message.type === 'read-twitter-csrf-token') {
-    return readTwitterCsrfToken(message.data)
-  }
-})
+export default i18n
