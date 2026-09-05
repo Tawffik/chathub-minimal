@@ -27,6 +27,7 @@ export default defineManifest(async () => {
       'https://*.poe.com/',
       'https://*.anthropic.com/',
       'https://*.claude.ai/',
+      'https://generativelanguage.googleapis.com/*',
     ],
     optional_host_permissions: ['https://*/*', 'wss://*/*'],
     permissions: ['storage', 'unlimitedStorage', 'sidePanel', 'declarativeNetRequestWithHostAccess', 'scripting'],

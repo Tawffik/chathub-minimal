@@ -17,7 +17,7 @@ export class GeminiApiBot extends AbstractBot {
 
   async doSendMessage(params: SendMessageParams) {
     if (!this.conversationContext) {
-      const model = this.sdk.getGenerativeModel({ model: 'gemini-pro' })
+      const model = this.sdk.getGenerativeModel({ model: 'gemini-2.5-flash' })
       const chatSession = model.startChat()
       this.conversationContext = { chatSession }
     }
