@@ -1,11 +1,10 @@
 import { ofetch } from 'ofetch'
 
-export async function decodePoeFormkey(html: string): Promise<string> {
-  const resp = await ofetch('https://chathub.gg/api/poe/decode-formkey', {
-    method: 'POST',
-    body: { html },
-  })
-  return resp.formkey
+// All calls to chathub.gg disabled for privacy-focused minimal build.
+// Premium / formkey helpers that depended on their backend are no-ops now.
+
+export async function decodePoeFormkey(_html: string): Promise<string> {
+  throw new Error('Poe formkey decoding disabled in minimal build')
 }
 
 type ActivateResponse =
@@ -16,28 +15,20 @@ type ActivateResponse =
     }
   | { activated: false; error: string }
 
-export async function activateLicense(key: string, instanceName: string) {
-  return ofetch<ActivateResponse>('https://chathub.gg/api/premium/activate', {
-    method: 'POST',
-    body: {
-      license_key: key,
-      instance_name: instanceName,
-    },
-  })
+export async function activateLicense(_key: string, _instanceName: string): Promise<ActivateResponse> {
+  return { activated: false, error: 'Premium activation disabled in minimal build' }
 }
 
 interface Product {
   price: number
 }
 
-export async function fetchPremiumProduct() {
-  return ofetch<Product>('https://chathub.gg/api/premium/product')
+export async function fetchPremiumProduct(): Promise<Product> {
+  return { price: 0 }
 }
 
 export async function createDiscount() {
-  return ofetch<{ code: string; startTime: number }>('https://chathub.gg/api/premium/discount/create', {
-    method: 'POST',
-  })
+  return { code: '', startTime: 0 }
 }
 
 export interface Discount {
@@ -59,10 +50,10 @@ interface PurchaseInfo {
   campaign?: Campaign
 }
 
-export async function fetchPurchaseInfo() {
-  return ofetch<PurchaseInfo>('https://chathub.gg/api/premium/info')
+export async function fetchPurchaseInfo(): Promise<PurchaseInfo> {
+  return { price: 0 }
 }
 
-export async function checkDiscount(params: { appOpenTimes: number; premiumModalOpenTimes: number }) {
-  return ofetch<{ show: boolean; campaign?: Campaign }>('https://chathub.gg/api/premium/discount/check', { params })
+export async function checkDiscount(_params: { appOpenTimes: number; premiumModalOpenTimes: number }) {
+  return { show: false }
 }
