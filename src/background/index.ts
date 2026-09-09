@@ -1,7 +1,6 @@
 import Browser from 'webextension-polyfill'
 import { ALL_IN_ONE_PAGE_ID } from '~app/consts'
 import { getUserConfig } from '~services/user-config'
-import { trackInstallSource } from './source'
 import { readTwitterCsrfToken } from './twitter-cookie'
 
 // expose storage.session to content scripts
@@ -28,19 +27,17 @@ Browser.action.onClicked.addListener(() => {
 Browser.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install') {
     Browser.tabs.create({ url: 'app.html#/setting' })
-    trackInstallSource()
+    // trackInstallSource removed for privacy
   }
 })
 
 Browser.commands.onCommand.addListener(async (command) => {
-  console.debug(`Command: ${command}`)
   if (command === 'open-app') {
     openAppPage()
   }
 })
 
 Browser.runtime.onMessage.addListener(async (message, sender) => {
-  console.debug('onMessage', message, sender)
   if (message.target !== 'background') {
     return
   }

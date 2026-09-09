@@ -1,7 +1,13 @@
-# تشغيل ChatHub بأمان (بدون ثغرات CI/CD)
+# تشغيل ChatHub Minimal بأمان (بدون ميتا داتا أو تتبع)
+
+## التغييرات اللي اتعملت في النسخة دي
+- تم تعطيل Sentry بالكامل
+- تم تعطيل تتبع التثبيت (Plausible + chathub.gg)
+- تم تقليل الـ console.debug
+- مفيش أي phone-home غير ضروري
 
 ## 1. تثبيت المتطلبات
-- Node.js 18+ 
+- Node.js 18+
 - Yarn (corepack enable)
 
 ## 2. تثبيت الحزم
@@ -16,17 +22,16 @@ yarn build
 ```
 
 ## 4. تحميل الإضافة في المتصفح
-1. افتح Chrome/Edge → `chrome://extensions`
+1. افتح Chrome/Edge → `chrome://extensions` أو `edge://extensions`
 2. فعّل **Developer mode**
 3. اضغط **Load unpacked**
 4. اختار مجلد `dist`
 
-## ملاحظات أمان (مقابل الثغرات السابقة)
-- لا تستخدم Gemini CLI أو Claude Code داخل GitHub Actions على هذا الريبو
-- لا تضع ملفات `.gemini/.env` أو `AGENTS.md` في الريبو
-- الصلاحيات محدودة (storage فقط)
-- تم إيقاف Sentry و Plausible → مفيش ميتا داتا بتتبعت
-- معظم console.debug/log اتشالوا
+## ملاحظات أمان
+- الصلاحيات محدودة قدر الإمكان
+- مفيش إرسال ميتا داتا لسيرفرات خارجية عند التثبيت
+- معظم اللوجز اتشالت
+- البوتات المجانية (ChatGPT Web / Claude Web / Gemini / Grok ...) بتشتغل على جلسة المتصفح بتاعتك
 
 ## لو هتعمل CI خاص بيك
 استخدم workflow بسيط من غير أدوات AI:
