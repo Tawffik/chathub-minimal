@@ -1,43 +1,35 @@
-import { getBrowser, getOS } from '~app/utils/navigator'
-import * as lemonsqueezy from './lemonsqueezy'
-
 interface PremiumActivation {
   licenseKey: string
   instanceId: string
 }
 
-function getInstanceName() {
-  return `${getOS()} / ${getBrowser()}`
-}
-
+/** Always treat premium as activated — no remote license checks. */
 export async function activatePremium(licenseKey: string): Promise<PremiumActivation> {
-  const instanceId = await lemonsqueezy.activateLicense(licenseKey, getInstanceName())
-  const data = { licenseKey, instanceId }
+  const data: PremiumActivation = {
+    licenseKey: licenseKey || 'unlocked',
+    instanceId: 'local-unlocked',
+  }
   localStorage.setItem('premium', JSON.stringify(data))
   return data
 }
 
 export async function validatePremium() {
-  const activation = getPremiumActivation()
-  if (!activation) {
-    return { valid: false }
-  }
-  return lemonsqueezy.validateLicense(activation.licenseKey, activation.instanceId)
+  return { valid: true as const }
 }
 
 export async function deactivatePremium() {
-  const activation = getPremiumActivation()
-  if (!activation) {
-    return
-  }
-  await lemonsqueezy.deactivateLicense(activation.licenseKey, activation.instanceId)
   localStorage.removeItem('premium')
 }
 
 export function getPremiumActivation(): PremiumActivation | null {
   const data = localStorage.getItem('premium')
   if (data) {
-    return JSON.parse(data)
+    try {
+      return JSON.parse(data)
+    } catch {
+      return null
+    }
   }
-  return null
+  // Default: act as if premium is present so UI stays unlocked
+  return { licenseKey: 'unlocked', instanceId: 'local-unlocked' }
 }

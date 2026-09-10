@@ -1,10 +1,12 @@
-# تشغيل ChatHub Minimal بأمان (بدون ميتا داتا أو تتبع)
+# تشغيل ChatHub Minimal بأمان (بدون ميتا داتا أو تتبع) + Premium مفتوح
 
-## التغييرات اللي اتعملت في النسخة دي
+## التغييرات في النسخة دي
 - تم تعطيل Sentry بالكامل
 - تم تعطيل تتبع التثبيت (Plausible + chathub.gg)
 - تم تقليل الـ console.debug
 - مفيش أي phone-home غير ضروري
+- **Premium مفتوح دائمًا** (بدون Lemon Squeezy / بدون تحقق ترخيص)
+- Side panel يفتح الشات مباشرة بدون شاشة ترقية
 
 ## 1. تثبيت المتطلبات
 - Node.js 18+
@@ -22,16 +24,17 @@ yarn build
 ```
 
 ## 4. تحميل الإضافة في المتصفح
-1. افتح Chrome/Edge → `chrome://extensions` أو `edge://extensions`
+1. افتح Chrome/Edge/Kiwi → `chrome://extensions` أو `kiwi://extensions`
 2. فعّل **Developer mode**
 3. اضغط **Load unpacked**
 4. اختار مجلد `dist`
 
-## ملاحظات أمان
+## ملاحظات
 - الصلاحيات محدودة قدر الإمكان
 - مفيش إرسال ميتا داتا لسيرفرات خارجية عند التثبيت
 - معظم اللوجز اتشالت
-- البوتات المجانية (ChatGPT Web / Claude Web / Gemini / Grok ...) بتشتغل على جلسة المتصفح بتاعتك
+- البوتات (ChatGPT Web / Claude Web / Gemini / Grok ...) بتشتغل على **جلسة المتصفح بتاعتك** أو API key بتاعك
+- Claude المدفوع محتاج حساب/رصيد Anthropic — التعديل ده بيفتح ميزات ChatHub فقط
 
 ## لو هتعمل CI خاص بيك
 استخدم workflow بسيط من غير أدوات AI:
