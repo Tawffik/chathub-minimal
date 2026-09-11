@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.webkit.CookieManager
+import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
@@ -12,12 +13,13 @@ import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 
 /**
- * Loads the standalone mobile UI (mobile-www) from assets.
- * This does NOT depend on Chrome extension APIs — so no black screen.
+ * WebView shell that opens official AI sites (Claude, ChatGPT, Gemini…)
+ * so the user can sign in with their own account — no API keys.
  */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var webView: WebView
+    private val homeUrl = "file:///android_asset/www/index.html"
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,8 +29,9 @@ class MainActivity : AppCompatActivity() {
         webView.setBackgroundColor(Color.parseColor("#0b0d12"))
         setContentView(webView)
 
-        CookieManager.getInstance().setAcceptCookie(true)
-        CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
+        val cookieManager = CookieManager.getInstance()
+        cookieManager.setAcceptCookie(true)
+        cookieManager.setAcceptThirdPartyCookies(webView, true)
 
         val settings = webView.settings
         settings.javaScriptEnabled = true
@@ -39,27 +42,55 @@ class MainActivity : AppCompatActivity() {
         settings.allowFileAccessFromFileURLs = true
         settings.allowUniversalAccessFromFileURLs = true
         settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-        settings.cacheMode = WebSettings.LOAD_DEFAULT
-        settings.mediaPlaybackRequiresUserGesture = false
-        settings.userAgentString = settings.userAgentString + " ChatHubMinimal/1.46"
+        settings.javaScriptCanOpenWindowsAutomatically = true
+        settings.setSupportMultipleWindows(false)
+        settings.userAgentString =
+            settings.userAgentString.replace("; wv", "") + " ChatHubMinimal/1.47"
 
         WebView.setWebContentsDebuggingEnabled(true)
 
+        webView.addJavascriptInterface(Bridge(), "AndroidBridge")
+
         webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+            override fun shouldOverrideUrlLoading(
+                view: WebView?,
+                request: WebResourceRequest?
+            ): Boolean {
+                // Keep navigation inside this WebView
                 return false
             }
         }
         webView.webChromeClient = WebChromeClient()
 
-        // Standalone UI — works offline except for API calls
-        webView.loadUrl("file:///android_asset/www/index.html")
+        webView.loadUrl(homeUrl)
+    }
+
+    inner class Bridge {
+        @JavascriptInterface
+        fun openUrl(url: String) {
+            runOnUiThread {
+                webView.loadUrl(url)
+            }
+        }
+
+        @JavascriptInterface
+        fun openHome() {
+            runOnUiThread {
+                webView.loadUrl(homeUrl)
+            }
+        }
     }
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (this::webView.isInitialized && webView.canGoBack()) {
-            webView.goBack()
+            val current = webView.url ?: ""
+            // If we left a site and can go back to home, do that
+            if (current.startsWith("http") && !webView.canGoBack()) {
+                webView.loadUrl(homeUrl)
+            } else {
+                webView.goBack()
+            }
         } else {
             @Suppress("DEPRECATION")
             super.onBackPressed()

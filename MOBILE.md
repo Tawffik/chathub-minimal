@@ -1,23 +1,30 @@
-# ChatHub Minimal — Android (نهائي)
+# ChatHub Minimal — Android
 
-## ليه الإصدار القديم كان شاشة سودة؟
-الإكستنشن محتاج `chrome.*` APIs. تحميل `app.html` جوه WebView بدون الإكستنشن = فشل صامت = شاشة سودة.
+## الوضع الحالي (من غير API key)
 
-## الحل النهائي
-تطبيق **قائم بذاته** في `mobile-www/`:
-- واجهة شات تعمل فور الفتح
-- موديلات: OpenAI / Claude / Gemini / OpenRouter
-- API keys تتخزن محليًا
-- مفيش اعتماد على Chrome extension
+التطبيق يفتح المواقع الرسمية جوه WebView:
 
-## تحميل الـ APK
-1. https://github.com/Tawffik/chathub-minimal/actions
-2. أو https://github.com/Tawffik/chathub-minimal/releases
-3. نزّل `.apk` → ثبّت → افتح ⚙ وحط مفتاح
+- Claude → https://claude.ai
+- ChatGPT → https://chatgpt.com
+- Gemini → https://gemini.google.com
+- Grok / Perplexity
 
-## الإكستنشن لسه موجود
-للميزات الكاملة مع جلسات الويب (Claude.ai login):
+تسجّل دخول **بحسابك**. الجلسة تتخزن في WebView (كوكيز).
+
+**مفيش API key مطلوب.**
+
+## المهم تفهمه
+- التطبيق **لا** يفتح Claude Pro/API مجانًا.
+- اللي بيظهر لك = نفس اللي على حسابك في المتصفح (Free أو Pro).
+- لو حسابك Free على Claude، حدود Free هي اللي هتشتغل.
+
+## التحميل
+https://github.com/Tawffik/chathub-minimal/releases
+أو من Actions بعد ما الـ workflow يخلّص.
+
+## الإكستنشن (Kiwi)
+للـ All-in-One جنب بعض من جلسات الويب:
 ```bash
-yarn install && yarn build
-# حمّل مجلد dist في Kiwi Browser
+yarn build
+# Load dist in Kiwi
 ```

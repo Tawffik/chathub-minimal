@@ -14,53 +14,35 @@
         <span class="logo">CH</span>
         <div>
           <div class="title">ChatHub Minimal</div>
-          <div class="subtitle">Premium · بدون ترخيص</div>
+          <div class="subtitle">سجّل دخولك · من غير API key</div>
         </div>
       </div>
-      <button id="btnSettings" class="icon-btn" title="Settings">⚙</button>
     </header>
 
-    <div class="toolbar">
-      <select id="modelSelect"></select>
-      <button id="btnNew" class="chip">محادثة جديدة</button>
-    </div>
+    <nav class="tabs" id="tabs"></nav>
 
-    <main id="messages" class="messages"></main>
-
-    <footer class="composer">
-      <textarea id="input" rows="1" placeholder="اكتب رسالتك..."></textarea>
-      <button id="btnSend" class="send">إرسال</button>
-    </footer>
+    <main class="stage">
+      <section id="home" class="panel active">
+        <div class="hero">
+          <h1>استخدم النماذج بحسابك</h1>
+          <p>
+            اختار خدمة من التبويبات فوق. هتفتح موقعها الرسمي جوه التطبيق.
+            سجّل دخولك مرة واحدة — الجلسة تفضل محفوظة هنا.
+            <strong>مفيش API key مطلوب.</strong>
+          </p>
+          <ul class="list">
+            <li>Claude → حسابك على claude.ai (Free أو Pro)</li>
+            <li>ChatGPT → حسابك على chatgpt.com</li>
+            <li>Gemini → حسابك على gemini.google.com</li>
+            <li>Grok → حسابك على x.com / grok</li>
+          </ul>
+          <p class="note">
+            التطبيق مش بيوفّر اشتراك مدفوع مجانًا — بيستخدم <em>حسابك أنت</em> على كل موقع.
+          </p>
+        </div>
+      </section>
+    </main>
   </div>
-
-  <div id="settingsModal" class="modal hidden">
-    <div class="modal-card">
-      <div class="modal-head">
-        <h2>الإعدادات / API Keys</h2>
-        <button id="btnCloseSettings" class="icon-btn">✕</button>
-      </div>
-      <p class="hint">التطبيق شغال محليًا. حط مفاتيحك هنا (بتتخزن على الجهاز فقط).</p>
-
-      <label>OpenAI API Key
-        <input id="keyOpenAI" type="password" placeholder="sk-..." autocomplete="off" />
-      </label>
-      <label>Anthropic (Claude) API Key
-        <input id="keyAnthropic" type="password" placeholder="sk-ant-..." autocomplete="off" />
-      </label>
-      <label>Google Gemini API Key
-        <input id="keyGemini" type="password" placeholder="AIza..." autocomplete="off" />
-      </label>
-      <label>OpenRouter API Key
-        <input id="keyOpenRouter" type="password" placeholder="sk-or-..." autocomplete="off" />
-      </label>
-
-      <div class="modal-actions">
-        <button id="btnSaveKeys" class="primary">حفظ</button>
-      </div>
-      <p class="foot">Claude/ChatGPT من جلسة الموقع أفضل في Kiwi + الإكستنشن. الـ APK مصمّم لـ API keys.</p>
-    </div>
-  </div>
-
   <script src="app.js"></script>
 </body>
 </html>
