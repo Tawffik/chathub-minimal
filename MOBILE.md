@@ -1,40 +1,23 @@
-# ChatHub Minimal — Android APK
+# ChatHub Minimal — Android (نهائي)
+
+## ليه الإصدار القديم كان شاشة سودة؟
+الإكستنشن محتاج `chrome.*` APIs. تحميل `app.html` جوه WebView بدون الإكستنشن = فشل صامت = شاشة سودة.
+
+## الحل النهائي
+تطبيق **قائم بذاته** في `mobile-www/`:
+- واجهة شات تعمل فور الفتح
+- موديلات: OpenAI / Claude / Gemini / OpenRouter
+- API keys تتخزن محليًا
+- مفيش اعتماد على Chrome extension
 
 ## تحميل الـ APK
+1. https://github.com/Tawffik/chathub-minimal/actions
+2. أو https://github.com/Tawffik/chathub-minimal/releases
+3. نزّل `.apk` → ثبّت → افتح ⚙ وحط مفتاح
 
-1. افتح: https://github.com/Tawffik/chathub-minimal/releases
-2. نزّل أحدث ملف `.apk`
-3. على الموبايل: اسمح بتثبيت من مصادر غير معروفة
-4. ثبّت الـ APK
-
-البناء يتم تلقائيًا مع كل push على `main` عبر GitHub Actions.
-
-## ماذا يوجد في الـ APK؟
-
-- نفس تعديلات Premium المفتوحة (بدون Lemon Squeezy)
-- واجهة ChatHub من مجلد `dist`
-- تشغيل داخل WebView
-
-## مهم للاستخدام على الموبايل
-
-| الميزة | في الـ APK | في Kiwi + Extension |
-|--------|-----------|---------------------|
-| Premium مفتوح | نعم | نعم |
-| بدون تتبع | نعم | نعم |
-| Claude/ChatGPT بجلسة الموقع | محدود (WebView) | أفضل |
-| API keys (Claude API / OpenAI…) | يعمل | يعمل |
-
-**للتجربة الأقوى على الموبايل:** استخدم Kiwi Browser + مجلد `dist` من الريبو.
-**للتطبيق كأيقونة APK:** نزّل من Releases واستخدم API keys من الإعدادات.
-
-## بناء يدوي
-
+## الإكستنشن لسه موجود
+للميزات الكاملة مع جلسات الويب (Claude.ai login):
 ```bash
 yarn install && yarn build
-mkdir -p android-app/app/src/main/assets/www
-cp -r dist/* android-app/app/src/main/assets/www/
-cd android-app && ./gradlew assembleDebug
+# حمّل مجلد dist في Kiwi Browser
 ```
-
-الـ APK يظهر في:
-`android-app/app/build/outputs/apk/debug/`

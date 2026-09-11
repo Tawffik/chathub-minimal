@@ -15,29 +15,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Enable corepack & install
-        run: |
-          corepack enable
-          yarn install --immutable || yarn install
-
-      - name: Build extension dist
-        run: yarn build
-
-      - name: Prepare WebView assets
+      - name: Package mobile WebView assets
         run: |
           mkdir -p android-app/app/src/main/assets/www
-          cp -r dist/* android-app/app/src/main/assets/www/
-          if [ -f android-app/app/src/main/assets/www/app.html ]; then
-            echo "app.html ready"
-          else
-            echo "WARNING: app.html missing"
-            ls -la android-app/app/src/main/assets/www/ | head -30
-          fi
+          cp -r mobile-www/* android-app/app/src/main/assets/www/
+          ls -la android-app/app/src/main/assets/www/
+          test -f android-app/app/src/main/assets/www/index.html
 
       - name: Setup JDK 17
         uses: actions/setup-java@v4
@@ -75,14 +58,24 @@ jobs:
           tag_name: apk-${{ github.run_number }}
           name: ChatHub Minimal APK #${{ github.run_number }}
           body: |
-            ## ChatHub Minimal for Android
-            - Premium unlocked
-            - No Lemon Squeezy / no license checks
-            - Telemetry minimized
+            ## ChatHub Minimal (Android)
 
-            **Install:** download the APK → allow unknown sources → install.
+            تطبيق مستقل (مش إكستنشن جوه WebView) — **مفيش شاشة سودة**.
 
-            **Note:** For Claude/ChatGPT web session, Kiwi Browser + extension `dist` is more reliable. This APK is a WebView shell; use API keys in Settings when possible.
+            ### الميزات
+            - واجهة شات جاهزة فور الفتح
+            - Premium / بدون Lemon Squeezy
+            - OpenAI · Claude · Gemini · OpenRouter عبر **API keys**
+            - المفاتيح تتخزن محليًا على الجهاز فقط
+
+            ### التثبيت
+            1. نزّل الـ APK
+            2. اسمح بتثبيت من مصادر غير معروفة
+            3. افتح التطبيق → ⚙ → حط API key → ابدأ المحادثة
+
+            ### ملاحظة
+            جلسات Claude/ChatGPT من الموقع أفضل في **Kiwi + الإكستنشن**.  
+            هذا الـ APK مصمم ليعمل بشكل موثوق عبر API keys.
           files: android-app/app/build/outputs/apk/debug/*.apk
           draft: false
           prerelease: false
