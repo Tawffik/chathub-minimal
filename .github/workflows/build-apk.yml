@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Enable corepack & install
         run: |
@@ -32,7 +32,6 @@ jobs:
         run: |
           mkdir -p android-app/app/src/main/assets/www
           cp -r dist/* android-app/app/src/main/assets/www/
-          # Ensure app.html is at root of www
           if [ -f android-app/app/src/main/assets/www/app.html ]; then
             echo "app.html ready"
           else
@@ -49,34 +48,27 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Grant execute for gradlew (if present)
-        run: |
-          cd android-app
-          if [ ! -f gradlew ]; then
-            gradle wrapper --gradle-version 8.2.1 || true
-          fi
-          chmod +x gradlew 2>/dev/null || true
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
 
-      - name: Build debug APK with Gradle
+      - name: Create Gradle wrapper
         working-directory: android-app
         run: |
-          # Generate wrapper if needed
-          if [ ! -f gradlew ]; then
-            curl -sL https://services.gradle.org/distributions/gradle-8.2.1-bin.zip -o /tmp/gradle.zip
-            sudo unzip -q /tmp/gradle.zip -d /opt
-            /opt/gradle-8.2.1/bin/gradle wrapper --gradle-version 8.2.1
-          fi
+          gradle wrapper --gradle-version 8.7
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+
+      - name: Build debug APK
+        working-directory: android-app
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: ChatHub-Minimal-APK
           path: android-app/app/build/outputs/apk/debug/*.apk
-          if-no-files-found: warn
+          if-no-files-found: error
 
-      - name: Create GitHub Release (on main)
+      - name: Create GitHub Release
         if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
@@ -88,9 +80,9 @@ jobs:
             - No Lemon Squeezy / no license checks
             - Telemetry minimized
 
-            **Install:** download the APK, enable "Install unknown apps" for your browser/file manager, then install.
+            **Install:** download the APK → allow unknown sources → install.
 
-            **Note:** Web-session bots (Claude/ChatGPT login) work best in Kiwi Browser with the extension `dist`. This APK is a WebView shell of the same UI; prefer API keys in Settings for reliable mobile use.
+            **Note:** For Claude/ChatGPT web session, Kiwi Browser + extension `dist` is more reliable. This APK is a WebView shell; use API keys in Settings when possible.
           files: android-app/app/build/outputs/apk/debug/*.apk
           draft: false
           prerelease: false

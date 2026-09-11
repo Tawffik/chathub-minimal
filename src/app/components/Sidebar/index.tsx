@@ -13,11 +13,8 @@ import minimalLogo from '~/assets/minimal-logo.svg'
 import logo from '~/assets/santa-logo.png'
 import { cx } from '~/utils'
 import { useEnabledBots } from '~app/hooks/use-enabled-bots'
-import { releaseNotesAtom, showDiscountModalAtom, sidebarCollapsedAtom } from '~app/state'
-import { getPremiumActivation } from '~services/premium'
+import { releaseNotesAtom, sidebarCollapsedAtom } from '~app/state'
 import { checkReleaseNotes } from '~services/release-notes'
-import * as api from '~services/server-api'
-import { getAppOpenTimes, getPremiumModalOpenTimes } from '~services/storage/open-times'
 import GuideModal from '../GuideModal'
 import ThemeSettingModal from '../ThemeSettingModal'
 import Tooltip from '../Tooltip'
@@ -40,27 +37,14 @@ function Sidebar() {
   const [collapsed, setCollapsed] = useAtom(sidebarCollapsedAtom)
   const [themeSettingModalOpen, setThemeSettingModalOpen] = useState(false)
   const enabledBots = useEnabledBots()
-  const setShowDiscountModal = useSetAtom(showDiscountModalAtom)
   const setReleaseNotes = useSetAtom(releaseNotesAtom)
 
   useEffect(() => {
-    Promise.all([getAppOpenTimes(), getPremiumModalOpenTimes(), checkReleaseNotes()]).then(
-      async ([appOpenTimes, premiumModalOpenTimes, releaseNotes]) => {
-        if (!getPremiumActivation()) {
-          const { show, campaign } = await api.checkDiscount({ appOpenTimes, premiumModalOpenTimes })
-          if (show) {
-            setShowDiscountModal(true)
-            return
-          }
-          if (campaign) {
-            setShowDiscountModal(campaign)
-            return
-          }
-        }
-        setReleaseNotes(releaseNotes)
-      },
-    )
-  }, [])
+    // Discount / campaign phone-home removed in minimal build.
+    checkReleaseNotes()
+      .then((releaseNotes) => setReleaseNotes(releaseNotes))
+      .catch(() => {})
+  }, [setReleaseNotes])
 
   return (
     <motion.aside

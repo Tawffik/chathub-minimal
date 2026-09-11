@@ -54,6 +54,10 @@ export async function fetchPurchaseInfo(): Promise<PurchaseInfo> {
   return { price: 0 }
 }
 
-export async function checkDiscount(_params: { appOpenTimes: number; premiumModalOpenTimes: number }) {
-  return { show: false }
+/** Always hide discount/campaign UI in minimal build. */
+export async function checkDiscount(_params: {
+  appOpenTimes: number
+  premiumModalOpenTimes: number
+}): Promise<{ show: boolean; campaign?: Campaign }> {
+  return { show: false, campaign: undefined }
 }
