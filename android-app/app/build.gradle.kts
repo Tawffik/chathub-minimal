@@ -11,17 +11,13 @@ android {
         applicationId = "gg.chathub.minimal"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.45.7"
+        versionCode = 3
+        versionName = "1.46.0"
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
         }
         debug {
             isMinifyEnabled = false
@@ -34,8 +30,10 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    buildFeatures {
-        viewBinding = false
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
 }
 
